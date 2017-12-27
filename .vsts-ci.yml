@@ -1,0 +1,20 @@
+queue:
+  name: Hosted Linux Preview
+steps:
+- task: Docker@0
+  inputs:
+    containerregistrytype: "Container Registry"
+    dockerRegistryEndpoint: "Docker Hub"
+    imageName: "jdharmon/$(Build.Repository.Name):$(Build.BuildNumber)"
+    qualifyImageName: "false"
+    includeLatestTag: "true"
+
+- task: Docker@0
+  inputs:
+    containerregistrytype: "Container Registry"
+    dockerRegistryEndpoint: "Docker Hub"
+    action: "Push an image"
+    imageName: "jdharmon/$(Build.Repository.Name):$(Build.BuildNumber)"
+    qualifyImageName: "false"
+    includeLatestTag: "true"
+

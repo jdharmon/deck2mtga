@@ -1,0 +1,42 @@
+﻿@model Deck
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <h1>Deck Converter</h1>
+    <p>Convert standard deck lists to MTG Arena format.</p>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <h2>Input</h2>
+        @using (Html.BeginForm("Index", "Home", FormMethod.Post)) {
+            // style = "width: 300px; height: 400px;"
+            @Html.TextArea("input", new { @class="deck", placeholder="Paste your deck here.\n\nExample:\n12 Mountain\n4 Kinjalli's Caller\n2 Regisaur Alpha" })
+            <p>
+                <input type="submit" value="Convert"/>
+            </p>
+        }
+    </div>
+    <div class="col-md-3">
+        @if (Model != null) {
+            <h2>Output</h2>
+            <ul id="output-deck" class="deck">
+                @foreach (var card in Model.Cards)
+                {
+                    <li>@card.ToArenaString()</li>
+                }
+            </ul>
+            @if (Model.Errors.Count > 0) {
+                <h2>Errors</h2>
+                <ul class="deck">
+                    @foreach (var error in Model.Errors)
+                    {
+                        <li>@error</li>
+                    }
+                </ul>
+            }
+        }
+    </div>
+</div>
