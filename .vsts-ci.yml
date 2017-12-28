@@ -5,7 +5,7 @@ steps:
   inputs:
     containerregistrytype: "Container Registry"
     dockerRegistryEndpoint: "Docker Hub"
-    imageName: "jdharmon/$(Build.Repository.Name):$(Build.BuildNumber)"
+    imageName: "$(Build.Repository.Name):$(Build.BuildNumber)"
     qualifyImageName: "false"
     includeLatestTag: "true"
 
@@ -14,7 +14,7 @@ steps:
     containerregistrytype: "Container Registry"
     dockerRegistryEndpoint: "Docker Hub"
     action: "Push an image"
-    imageName: "jdharmon/$(Build.Repository.Name):$(Build.BuildNumber)"
+    imageName: "$(Build.Repository.Name):$(Build.BuildNumber)"
     qualifyImageName: "false"
     includeLatestTag: "true"
 
