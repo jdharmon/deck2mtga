@@ -5,6 +5,7 @@ steps:
   inputs:
     containerregistrytype: "Container Registry"
     dockerRegistryEndpoint: "Docker Hub"
+    action: "Build an image"
     imageName: "$(Build.Repository.Name):$(Build.BuildNumber)"
     qualifyImageName: "false"
     includeLatestTag: "true"
