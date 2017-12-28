@@ -31,6 +31,9 @@ namespace Deck2MTGA_Web
             using (var reader = new StringReader(input)) {
                 string line;
                 while ((line = await reader.ReadLineAsync()) != null) {
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
                     var match = _cardRegex.Match(line);
                     if (match.Success) {
                         var card = await FindCard(match.Groups["name"].Value);
@@ -43,6 +46,7 @@ namespace Deck2MTGA_Web
                     }
                     else
                         deck.Errors.Add(line);
+                        
                     await Task.Delay(100);
                 }
             }
