@@ -41,7 +41,7 @@ namespace Deck2MTGA_Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseStatusCodePages();
             }
 
             app.UseSwagger();
