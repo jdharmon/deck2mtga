@@ -20,6 +20,14 @@ namespace Deck2MTGA_Web
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    IHostingEnvironment env = context.HostingEnvironment;
+
+                    config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                        .AddCommandLine(args);
+                })
                 .Build();
     }
 }

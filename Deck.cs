@@ -47,7 +47,7 @@ namespace Deck2MTGA_Web
                     else
                         deck.Errors.Add(line);
                         
-                    await Task.Delay(100);
+                    await Task.Delay(500);
                 }
             }
             return deck;
