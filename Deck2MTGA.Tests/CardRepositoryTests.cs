@@ -78,8 +78,7 @@ namespace Deck2MTGA.Tests
                     }
                 });
 
-            var ex = Assert.Throws<ErrorException>(() => _repository.Find("foo"));
-            Assert.Equal(HttpStatusCode.NotFound, ex.Response.StatusCode);
+            var ex = Assert.Throws<DataException>(() => _repository.Find("foo"));
         }
 
         [Fact]
@@ -92,8 +91,8 @@ namespace Deck2MTGA.Tests
                     Response = new HttpResponseMessageWrapper(new HttpResponseMessage((HttpStatusCode)429), null)
                 });
 
-            var ex = Assert.Throws<ErrorException>(() => _repository.Find(CARD_NAME));
-            Assert.Equal(429, (int)ex.Response.StatusCode);
+            var ex = Assert.Throws<DataException>(() => _repository.Find(CARD_NAME));
+            Assert.True(ex.Fatal);
         }
     }
 }

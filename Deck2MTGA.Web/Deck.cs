@@ -44,13 +44,19 @@ namespace Deck2MTGA.Web
 
                     var match = _cardRegex.Match(line);
                     if (match.Success) {
-                        var card = _cardRepository.Find(match.Groups["name"].Value);
-                        if (card == null) {
-                            Errors.Add(line);
-                            continue;
+                        try
+                        {
+                            var card = _cardRepository.Find(match.Groups["name"].Value);
+                            card.Count = int.Parse(match.Groups["count"].Value);
+                            Cards.Add(card);
                         }
-                        card.Count = int.Parse(match.Groups["count"].Value);
-                        Cards.Add(card);
+                        catch (DataException ex)
+                        {
+                            if (!ex.Fatal)
+                                Errors.Add($"{line} - {ex.Message}");
+                            else
+                                throw;
+                        }
                     }
                     else
                         Errors.Add($"{line} - Invalid format");

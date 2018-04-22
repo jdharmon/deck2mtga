@@ -5,6 +5,7 @@ using Scryfall.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,18 +44,28 @@ namespace Deck2MTGA.Web.Repositories
 
         private Card Search(string name)
         {
-            //Search for exact card name in legal sets
-            var card = _scryfallClient.Cards.Search($"!\"{name}\" ({_legalSets})").Data.FirstOrDefault();
-
-            //Add sleep to calls so we don't exceed the API's rate limit
-            Thread.Sleep(50);
-
-            return new Card()
+            try
             {
-                Name = card.Name,
-                Set = card.Set.ToUpper(),
-                CollectorNumber = int.TryParse(card.CollectorNumber, out int n) ? n : 0
-            };
+                //Search for exact card name in legal sets
+                var card = _scryfallClient.Cards.Search($"!\"{name}\" ({_legalSets})").Data.First();
+
+                //Add sleep to calls so we don't exceed the API's rate limit
+                Thread.Sleep(50);
+
+                return new Card()
+                {
+                    Name = card.Name,
+                    Set = card.Set.ToUpper(),
+                    CollectorNumber = int.TryParse(card.CollectorNumber, out int n) ? n : 0
+                };
+            }
+            catch (Scryfall.API.Models.ErrorException ex)
+            {
+                if (ex.Response.StatusCode == HttpStatusCode.NotFound)
+                    throw new DataException("Card not found");
+
+                throw new DataException("Unexpected error searching for card", ex, true);
+            }
         }
     }
 }
