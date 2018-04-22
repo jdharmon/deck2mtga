@@ -9,6 +9,7 @@ steps:
     imageName: "$(Build.Repository.Name):$(Build.BuildNumber)"
     qualifyImageName: "false"
     includeLatestTag: "true"
+    workingDirectory: Deck2MTGA.Web
 
 - task: Docker@0
   inputs:

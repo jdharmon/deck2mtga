@@ -2,7 +2,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace Deck2MTGA_Web
+namespace Deck2MTGA.Web
 {
     public class ApiActionModelConvention : IActionModelConvention
     {

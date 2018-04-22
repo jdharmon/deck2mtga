@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Deck2MTGA_Web
+namespace Deck2MTGA.Web
 {
     public class Program
     {

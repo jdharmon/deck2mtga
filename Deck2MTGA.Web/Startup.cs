@@ -4,12 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace Deck2MTGA_Web
+namespace Deck2MTGA.Web
 {
     public class Startup
     {
@@ -30,6 +31,10 @@ namespace Deck2MTGA_Web
             {
                 config.SwaggerDoc("v1", new Info() { Title = "MTG Arena Deck Converter", Version = "v1"});
             });
+            services.AddMemoryCache();
+            services.AddScoped<Repositories.ICardRepository>(provider => 
+                new Repositories.CardRepository(provider.GetService<IMemoryCache>(), new Scryfall.API.ScryfallClient())
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

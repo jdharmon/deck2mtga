@@ -1,4 +1,4 @@
-namespace Deck2MTGA_Web
+namespace Deck2MTGA.Web
 {    
     public class Card {
         public string Name { get; set; }

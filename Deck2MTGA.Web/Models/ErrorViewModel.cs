@@ -1,6 +1,6 @@
 using System;
 
-namespace Deck2MTGA_Web.Models
+namespace Deck2MTGA.Web.Models
 {
     public class ErrorViewModel
     {
