@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  web:
+    image: deck2mtga
+    build:
+       context: Deck2MTGA.Web
+#      context: .
+#      dockerfile: Deck2MTGA.Web/Dockerfile

@@ -5,7 +5,16 @@ VisualStudioVersion = 15.0.27428.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Deck2MTGA.Web", "Deck2MTGA.Web\Deck2MTGA.Web.csproj", "{45A6150B-AF5D-41C0-8363-336B0B0A67F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deck2MTGA.Tests", "Deck2MTGA.Tests\Deck2MTGA.Tests.csproj", "{7AD07758-3B75-49F3-ADD8-137EA52C1BBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Deck2MTGA.Tests", "Deck2MTGA.Tests\Deck2MTGA.Tests.csproj", "{7AD07758-3B75-49F3-ADD8-137EA52C1BBB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8D9B2331-5FD5-4E91-A7B7-5A145C98EE35}"
+	ProjectSection(SolutionItems) = preProject
+		.vsts-ci.yml = .vsts-ci.yml
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{3BEB58C7-5A0B-48F7-BAC2-619D3D8D3297}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +30,10 @@ Global
 		{7AD07758-3B75-49F3-ADD8-137EA52C1BBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AD07758-3B75-49F3-ADD8-137EA52C1BBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AD07758-3B75-49F3-ADD8-137EA52C1BBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BEB58C7-5A0B-48F7-BAC2-619D3D8D3297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BEB58C7-5A0B-48F7-BAC2-619D3D8D3297}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BEB58C7-5A0B-48F7-BAC2-619D3D8D3297}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BEB58C7-5A0B-48F7-BAC2-619D3D8D3297}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
