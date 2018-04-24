@@ -2,9 +2,6 @@ using Deck2MTGA.Web.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Rest;
 using Moq;
-using Scryfall.API;
-using Scryfall.API.Models;
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -16,13 +13,15 @@ namespace Deck2MTGA.Tests
     {
         const string CARD_NAME = "Opt";
 
-        private readonly Mock<IScryfallClient> _scryfallClient;
+        private readonly Mock<IMtgDbContext> _dbContext;
         private readonly CardRepository _repository;
 
         public CardRepositoryTests()
         {
-            _scryfallClient = new Mock<IScryfallClient>();
+            _dbContext = new Mock<IMtgDbContext>();
             _repository = new CardRepository(new MemoryCache(new MemoryCacheOptions()), _scryfallClient.Object);
+
+
 
             //Return default card search result
             _scryfallClient.Setup(m => m.Cards.SearchWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<UniqueStrategy?>(), It.IsAny<SortOrder?>(), It.IsAny<SortDirection?>(), It.IsAny<bool?>(), It.IsAny<int?>(), null, default(CancellationToken)))
@@ -44,6 +43,9 @@ namespace Deck2MTGA.Tests
                         }
                     }
                 });
+
+            _dbContext.Setup(m => m.Cards)
+                .Returns(new )
         }
 
         [Fact]

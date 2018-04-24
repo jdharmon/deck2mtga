@@ -1,14 +1,12 @@
 ﻿using Deck2MTGA.Web.Models;
 using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
-using Scryfall.API;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading;
-using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace Deck2MTGA.Web.Repositories
 {
@@ -18,16 +16,17 @@ namespace Deck2MTGA.Web.Repositories
         private readonly string _legalSets;
 
         private IMemoryCache _cache;
-        private IScryfallClient _scryfallClient;
+        private IMtgDbContext _dbContext;
 
-        public CardRepository(IMemoryCache cache, IScryfallClient scryfallClient)
+        public CardRepository(IMemoryCache cache, IMtgDbContext dbContext)
         {
             _cache = cache;
-            _scryfallClient = scryfallClient;
+            _dbContext = dbContext;
 
             //Parse contents of LEGAL_SETS environment variable into search options format: (e:SET1 OR e:SET2)
             var legalSets = Environment.GetEnvironmentVariable("LEGAL_SETS");
-            if (!string.IsNullOrEmpty(legalSets)) {
+            if (!string.IsNullOrEmpty(legalSets))
+            {
                 var legalSetArray = legalSets.Split(new[] { ';', ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 _legalSets = string.Join(" OR ", legalSetArray.Select(s => $"e:{s}").ToArray());
             }
@@ -44,28 +43,10 @@ namespace Deck2MTGA.Web.Repositories
 
         private Card Search(string name)
         {
-            try
-            {
-                //Search for exact card name in legal sets
-                var card = _scryfallClient.Cards.Search($"!\"{name}\" ({_legalSets})").Data.First();
-
-                //Add sleep to calls so we don't exceed the API's rate limit
-                Thread.Sleep(50);
-
-                return new Card()
-                {
-                    Name = card.Name,
-                    Set = card.Set.ToUpper(),
-                    CollectorNumber = int.TryParse(card.CollectorNumber, out int n) ? n : 0
-                };
-            }
-            catch (Scryfall.API.Models.ErrorException ex)
-            {
-                if (ex.Response.StatusCode == HttpStatusCode.NotFound)
-                    throw new DataException("Card not found");
-
-                throw new DataException("Unexpected error searching for card", ex, true);
-            }
+            return _dbContext.Cards.AsQueryable()
+                .Where(c => c.Name == name)
+                .OrderByDescending(c => c.MultiverseId)
+                .FirstOrDefault();
         }
     }
 }

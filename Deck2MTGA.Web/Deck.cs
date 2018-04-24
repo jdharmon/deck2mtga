@@ -1,15 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
+using Deck2MTGA.Web.Models;
 using Deck2MTGA.Web.Repositories;
-using Newtonsoft.Json;
-using Scryfall.API;
 
 namespace Deck2MTGA.Web
 {

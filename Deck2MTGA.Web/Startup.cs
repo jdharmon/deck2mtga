@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Deck2MTGA.Web.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
@@ -32,8 +33,9 @@ namespace Deck2MTGA.Web
                 config.SwaggerDoc("v1", new Info() { Title = "MTG Arena Deck Converter", Version = "v1"});
             });
             services.AddMemoryCache();
-            services.AddScoped<Repositories.ICardRepository>(provider => 
-                new Repositories.CardRepository(provider.GetService<IMemoryCache>(), new Scryfall.API.ScryfallClient())
+            services.AddSingleton<IMtgDbContext>(new MtgDbContext());
+            services.AddScoped<ICardRepository>(provider =>
+                new CardRepository(provider.GetService<IMemoryCache>(), provider.GetService<IMtgDbContext>())
             );
         }
 
