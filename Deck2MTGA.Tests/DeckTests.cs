@@ -1,11 +1,8 @@
 ﻿using Deck2MTGA.Web;
+using Deck2MTGA.Web.Models;
 using Deck2MTGA.Web.Repositories;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Deck2MTGA.Tests
@@ -25,7 +22,7 @@ namespace Deck2MTGA.Tests
                 {
                     Name = name,
                     Set = "XXX",
-                    CollectorNumber = name.GetHashCode()
+                    Number = "123"
                 });
         }
 

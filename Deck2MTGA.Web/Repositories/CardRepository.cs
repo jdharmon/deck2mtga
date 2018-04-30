@@ -1,12 +1,9 @@
 ﻿using Deck2MTGA.Web.Models;
 using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Linq;
-using System.Net;
-using System.Threading;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using System;
+using System.Linq;
 
 namespace Deck2MTGA.Web.Repositories
 {
@@ -15,12 +12,10 @@ namespace Deck2MTGA.Web.Repositories
         private readonly TimeSpan _cacheTimeout = TimeSpan.FromHours(24);
         private readonly string _legalSets;
 
-        private IMemoryCache _cache;
         private IMtgDbContext _dbContext;
 
-        public CardRepository(IMemoryCache cache, IMtgDbContext dbContext)
+        public CardRepository(IMtgDbContext dbContext)
         {
-            _cache = cache;
             _dbContext = dbContext;
 
             //Parse contents of LEGAL_SETS environment variable into search options format: (e:SET1 OR e:SET2)
@@ -34,16 +29,7 @@ namespace Deck2MTGA.Web.Repositories
 
         public Card Find(string name)
         {
-            return _cache.GetOrCreate(name.ToUpper(), (entry) =>
-            {
-                entry.AbsoluteExpirationRelativeToNow = _cacheTimeout;
-                return Search(name);
-            });
-        }
-
-        private Card Search(string name)
-        {
-            return _dbContext.Cards.AsQueryable()
+            return _dbContext.Cards
                 .Where(c => c.Name == name)
                 .OrderByDescending(c => c.MultiverseId)
                 .FirstOrDefault();

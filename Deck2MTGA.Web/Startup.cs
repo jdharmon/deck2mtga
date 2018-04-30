@@ -35,7 +35,7 @@ namespace Deck2MTGA.Web
             services.AddMemoryCache();
             services.AddSingleton<IMtgDbContext>(new MtgDbContext());
             services.AddScoped<ICardRepository>(provider =>
-                new CardRepository(provider.GetService<IMemoryCache>(), provider.GetService<IMtgDbContext>())
+                new CardRepository(provider.GetService<IMtgDbContext>())
             );
         }
 

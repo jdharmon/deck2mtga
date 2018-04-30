@@ -1,5 +1,6 @@
 ﻿using Deck2MTGA.Web.Models;
 using MongoDB.Driver;
+using System.Linq;
 
 namespace Deck2MTGA.Web.Repositories
 {
@@ -14,17 +15,17 @@ namespace Deck2MTGA.Web.Repositories
                 _database = client.GetDatabase("mtg");
         }
 
-        public IMongoCollection<Card> Cards
+        public IQueryable<Card> Cards
         {
             get
             {
-                return _database.GetCollection<Card>("cards");
+                return _database.GetCollection<Card>("cards").AsQueryable();
             }
         }
 
-        public IMongoCollection<Set> Sets
+        public IQueryable<Set> Sets
         {
-            get => _database.GetCollection<Set>("sets");
+            get => _database.GetCollection<Set>("sets").AsQueryable();
         }
     }
 }
