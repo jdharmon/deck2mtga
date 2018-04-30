@@ -10,4 +10,4 @@ docker run -p 8080:80 -e LEGAL_SETS=AKH;HOU;XLN;RIX jdharmon/deck2mtga
 
 The environment variable ```LEGAL_SETS``` defines which sets to search.
 
-Uses the [Scryfall API](https://scryfall.com/docs/api) and [C# Scryfall Client](https://github.com/jdharmon/scryfallapi-csharp).
+Uses the [MTGDb](https://github.com/jdharmon/MTGDb) and data from [MTG JSON](https://mtgjson.com/).
