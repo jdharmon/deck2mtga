@@ -1,7 +1,7 @@
 using Deck2MTGA.Web.Models;
 using Deck2MTGA.Web.Repositories;
-using Microsoft.Extensions.Caching.Memory;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -21,15 +21,31 @@ namespace Deck2MTGA.Tests
             {
                 new Card
                 {
+                    MultiverseId = 22988,
                     Name = CARD_NAME,
-                    Set = "xln",
+                    Set = "INV",
                     Number = "65"
+                },
+                new Card
+                {
+                    MultiverseId = 435217,
+                    Name = CARD_NAME,
+                    Set = "XLN",
+                    Number = "65"
+                },
+                new Card
+                {
+                    MultiverseId = 442948,
+                    Name = CARD_NAME,
+                    Set = "DOM",
+                    Number = "60"
                 }
             }.AsQueryable();
 
             _dbContext = new Mock<IMtgDbContext>();
             _dbContext.As<IMtgDbContext>().Setup(m => m.Cards).Returns(cards);
 
+            Environment.SetEnvironmentVariable("LEGAL_SETS", "AKH;HOU;XLN;RIX");
             _repository = new CardRepository(_dbContext.Object);
         }
 
@@ -40,6 +56,7 @@ namespace Deck2MTGA.Tests
 
             Assert.NotNull(card);
             Assert.Equal("Opt", card.Name);
+            Assert.Equal("XLN", card.Set);
         }
 
         [Fact]

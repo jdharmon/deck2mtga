@@ -10,7 +10,7 @@ namespace Deck2MTGA.Web.Repositories
     public class CardRepository : ICardRepository
     {
         private readonly TimeSpan _cacheTimeout = TimeSpan.FromHours(24);
-        private readonly string _legalSets;
+        private readonly string[] _legalSets;
 
         private IMtgDbContext _dbContext;
 
@@ -22,8 +22,7 @@ namespace Deck2MTGA.Web.Repositories
             var legalSets = Environment.GetEnvironmentVariable("LEGAL_SETS");
             if (!string.IsNullOrEmpty(legalSets))
             {
-                var legalSetArray = legalSets.Split(new[] { ';', ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                _legalSets = string.Join(" OR ", legalSetArray.Select(s => $"e:{s}").ToArray());
+                _legalSets = legalSets.Split(new[] { ';', ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
@@ -31,6 +30,7 @@ namespace Deck2MTGA.Web.Repositories
         {
             return _dbContext.Cards
                 .Where(c => c.Name == name)
+                .Where(c => _legalSets.Length > 0 && _legalSets.Contains(c.Set))
                 .OrderByDescending(c => c.MultiverseId)
                 .FirstOrDefault();
         }
