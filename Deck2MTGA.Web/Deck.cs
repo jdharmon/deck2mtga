@@ -25,32 +25,32 @@ namespace Deck2MTGA.Web
         {
             if (string.IsNullOrWhiteSpace(input))
                 return;
-                
+
             ParseAsync(input).GetAwaiter().GetResult();
         }
 
         public async Task ParseAsync(string input)
         {
-            using (var reader = new StringReader(input)) {
+            using (var reader = new StringReader(input))
+            {
                 string line;
-                while ((line = await reader.ReadLineAsync()) != null) {
+                while ((line = await reader.ReadLineAsync()) != null)
+                {
                     if (string.IsNullOrWhiteSpace(line))
                         continue;
 
                     var match = _cardRegex.Match(line);
-                    if (match.Success) {
-                        try
+                    if (match.Success)
+                    {
+                        var card = _cardRepository.Find(match.Groups["name"].Value);
+                        if (card != null)
                         {
-                            var card = _cardRepository.Find(match.Groups["name"].Value);
                             card.Count = int.Parse(match.Groups["count"].Value);
                             Cards.Add(card);
                         }
-                        catch (DataException ex)
+                        else
                         {
-                            if (!ex.Fatal)
-                                Errors.Add($"{line} - {ex.Message}");
-                            else
-                                throw;
+                            Errors.Add($"{line} - Card not found");
                         }
                     }
                     else
@@ -59,14 +59,16 @@ namespace Deck2MTGA.Web
             }
         }
 
-        public string ToDeckString() {
+        public string ToDeckString()
+        {
             var builder = new StringBuilder();
             foreach (var card in Cards)
                 builder.AppendLine(card.ToString());
             return builder.ToString();
         }
 
-        public string ToArenaString() {
+        public string ToArenaString()
+        {
             var builder = new StringBuilder();
             foreach (var card in Cards)
                 builder.AppendLine(card.ToArenaString());

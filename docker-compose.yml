@@ -5,5 +5,7 @@ services:
     image: deck2mtga
     build:
        context: Deck2MTGA.Web
-#      context: .
-#      dockerfile: Deck2MTGA.Web/Dockerfile
+    environment:
+      - LEGAL_SETS=AKH;HOU;XLN;RIX;DOM
+  db:
+    image: jdharmon/mtgdb

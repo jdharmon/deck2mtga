@@ -39,7 +39,7 @@ namespace Deck2MTGA.Tests
         public void Parse_CardNotFound()
         {
             _repository.Setup(m => m.Find(It.IsAny<string>()))
-                .Throws(new DataException());
+                .Returns<Card>(null);
 
             _deck.Parse("60 foo");
 

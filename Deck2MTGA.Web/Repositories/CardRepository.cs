@@ -10,7 +10,7 @@ namespace Deck2MTGA.Web.Repositories
     public class CardRepository : ICardRepository
     {
         private readonly TimeSpan _cacheTimeout = TimeSpan.FromHours(24);
-        private readonly string[] _legalSets;
+        private readonly string[] _legalSets = new string[0];
 
         private IMtgDbContext _dbContext;
 
@@ -30,7 +30,7 @@ namespace Deck2MTGA.Web.Repositories
         {
             return _dbContext.Cards
                 .Where(c => c.Name == name)
-                .Where(c => _legalSets.Length > 0 && _legalSets.Contains(c.Set))
+                .Where(c => _legalSets.Length == 0 || _legalSets.Contains(c.Set))
                 .OrderByDescending(c => c.MultiverseId)
                 .FirstOrDefault();
         }

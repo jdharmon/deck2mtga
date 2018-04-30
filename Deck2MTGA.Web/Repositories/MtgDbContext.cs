@@ -10,7 +10,7 @@ namespace Deck2MTGA.Web.Repositories
 
         public MtgDbContext()
         {
-            var client = new MongoClient("mongodb://localhost");
+            var client = new MongoClient("mongodb://db");
             if (client != null)
                 _database = client.GetDatabase("mtg");
         }
