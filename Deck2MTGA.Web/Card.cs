@@ -11,7 +11,10 @@ namespace Deck2MTGA.Web
         }
 
         public string ToArenaString() {
-            return $"{Count} {Name} ({Set}) {CollectorNumber}";
+            // Arena set code form DOM is DAR
+            var arenaSet = Set == "DOM" ? "DAR" : Set;
+
+            return $"{Count} {Name} ({arenaSet}) {CollectorNumber}";
         }
     }
 }
