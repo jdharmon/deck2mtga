@@ -1,21 +1,17 @@
-﻿using Deck2MTGA.Web.Models;
-using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Caching.Memory;
 using Scryfall.API;
+using Scryfall.API.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Deck2MTGA.Web.Repositories
 {
     public class CardRepository : ICardRepository
     {
         private readonly TimeSpan _cacheTimeout = TimeSpan.FromHours(24);
-        private readonly string _legalSets;
 
         private IMemoryCache _cache;
         private IScryfallClient _scryfallClient;
@@ -24,15 +20,14 @@ namespace Deck2MTGA.Web.Repositories
         {
             _cache = cache;
             _scryfallClient = scryfallClient;
-
-            //Parse contents of LEGAL_SETS environment variable into search options format: (e:SET1 OR e:SET2)
-            var legalSets = Environment.GetEnvironmentVariable("LEGAL_SETS");
-            if (!string.IsNullOrEmpty(legalSets)) {
-                var legalSetArray = legalSets.Split(new[] { ';', ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                _legalSets = string.Join(" OR ", legalSetArray.Select(s => $"e:{s}").ToArray());
-            }
         }
 
+        /// <summary>
+        /// Find card by name
+        /// </summary>
+        /// <remarks>Uses caching to limit API requests</remarks>
+        /// <param name="name"></param>
+        /// <returns>Card</returns>
         public Card Find(string name)
         {
             return _cache.GetOrCreate(name.ToUpper(), (entry) =>
@@ -42,12 +37,18 @@ namespace Deck2MTGA.Web.Repositories
             });
         }
 
+        /// <summary>
+        /// Search Scryfall for card by name
+        /// </summary>
+        /// <param name="name">Name of card to find</param>
+        /// <returns>Card</returns>
         private Card Search(string name)
         {
             try
             {
+                var legalSets = GetLegalSetSearchString();
                 //Search for exact card name in legal sets
-                var card = _scryfallClient.Cards.Search($"!\"{name}\" ({_legalSets})").Data.First();
+                var card = _scryfallClient.Cards.Search($"!\"{name}\" ({legalSets})").Data.First();
 
                 //Add sleep to calls so we don't exceed the API's rate limit
                 Thread.Sleep(50);
@@ -66,6 +67,34 @@ namespace Deck2MTGA.Web.Repositories
 
                 throw new DataException("Unexpected error searching for card", ex, true);
             }
+        }
+
+        /// <summary>
+        /// Get list of legal sets as search string
+        /// </summary>
+        /// <returns>Set search string</returns>
+        private string GetLegalSetSearchString()
+        {
+            return _cache.GetOrCreate("LegalSets", (entry) =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = _cacheTimeout;
+
+                var legalSets = GetLegalSets();
+                return string.Join(" OR ", legalSets.Select(s => $"e:{s}").ToArray());
+            });
+        }
+
+
+        /// <summary>
+        /// Get list of legal sets
+        /// </summary>
+        /// <returns>Legal sets</returns>
+        public IEnumerable<string> GetLegalSets()
+        {
+            return _scryfallClient.Sets.GetAll().Data
+                    .Where(s => s.ReleasedAt >= new DateTime(2017, 04, 28) && s.ReleasedAt <= DateTime.Today)
+                    .Where(s => s.SetType == SetTypes.Core || s.SetType == SetTypes.Expansion)
+                    .Select(s => s.Code);
         }
     }
 }

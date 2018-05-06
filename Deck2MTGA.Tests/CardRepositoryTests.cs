@@ -22,7 +22,51 @@ namespace Deck2MTGA.Tests
         public CardRepositoryTests()
         {
             _scryfallClient = new Mock<IScryfallClient>();
+            SetupScryfallClientResponses();
             _repository = new CardRepository(new MemoryCache(new MemoryCacheOptions()), _scryfallClient.Object);
+        }
+
+        private void SetupScryfallClientResponses()
+        {
+            //Return mix of legal and illegal sets
+            _scryfallClient.Setup(m => m.Sets.GetAllWithHttpMessagesAsync(null, default(CancellationToken)))
+                .ReturnsAsync(new HttpOperationResponse<SetList>
+                {
+                    Response = new HttpResponseMessage(HttpStatusCode.OK),
+                    Body = new SetList(new[]  
+                    {
+                        new Set
+                        {   //Legal
+                            Code = "akh",
+                            SetType = SetTypes.Expansion,
+                            ReleasedAt = new DateTime(2017, 04, 28)
+                        },
+                        new Set
+                        {   //Legal
+                            Code = "m19",
+                            SetType = SetTypes.Core,
+                            ReleasedAt = new DateTime(2018, 01, 01)
+                        },
+                        new Set
+                        {   //Illegal - wrong type
+                            Code = "ddu",
+                            SetType = SetTypes.DuelDeck,
+                            ReleasedAt = new DateTime(2018, 04, 06)
+                        },
+                        new Set
+                        {   //Illegal - released too early
+                            Code = "aer",
+                            SetType = SetTypes.Expansion,
+                            ReleasedAt = new DateTime(2017, 01, 20)
+                        },
+                        new Set
+                        {   //Illegal - unlreleased released too early
+                            Code = "aer",
+                            SetType = SetTypes.Expansion,
+                            ReleasedAt = new DateTime(2099, 01, 20)
+                        }
+                    })
+                });
 
             //Return default card search result
             _scryfallClient.Setup(m => m.Cards.SearchWithHttpMessagesAsync(It.IsAny<string>(), It.IsAny<UniqueStrategy?>(), It.IsAny<SortOrder?>(), It.IsAny<SortDirection?>(), It.IsAny<bool?>(), It.IsAny<int?>(), null, default(CancellationToken)))
@@ -93,6 +137,15 @@ namespace Deck2MTGA.Tests
 
             var ex = Assert.Throws<DataException>(() => _repository.Find(CARD_NAME));
             Assert.True(ex.Fatal);
+        }
+
+        [Fact]
+        public void GetLegalSets()
+        {
+            var expected = new[] { "akh", "m19" };
+            var actual = _repository.GetLegalSets();
+
+            Assert.Equal(expected, actual);
         }
     }
 }
