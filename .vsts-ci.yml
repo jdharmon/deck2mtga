@@ -1,22 +1,40 @@
 queue:
   name: Hosted Linux Preview
+
 steps:
-- task: Docker@0
+- task: DotNetCoreCLI@2
   inputs:
-    containerregistrytype: "Container Registry"
-    dockerRegistryEndpoint: "Docker Hub"
-    action: "Build an image"
-    imageName: "$(Build.Repository.Name):$(Build.BuildNumber)"
-    qualifyImageName: "false"
-    includeLatestTag: "true"
-    workingDirectory: Deck2MTGA.Web
+    command: restore
+    projects: '**/*.csproj'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    projects: '**/*.csproj'
+    arguments: '--configuration Release'
+
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    projects: '**/*Tests/*.csproj'
+    arguments: '--configuration Release'
 
 - task: Docker@0
   inputs:
-    containerregistrytype: "Container Registry"
-    dockerRegistryEndpoint: "Docker Hub"
-    action: "Push an image"
-    imageName: "$(Build.Repository.Name):$(Build.BuildNumber)"
-    qualifyImageName: "false"
-    includeLatestTag: "true"
+    containerregistrytype: 'Container Registry'
+    dockerRegistryConnection: 'Docker Hub'
+	action: 'Build an image'
+    defaultContext: false
+    context: Deck2MTGA.Web
+    imageName: '$(Build.Repository.Name):$(Build.BuildNumber)'
+    qualifyImageName: false
+    includeLatestTag: true
 
+- task: Docker@0
+  inputs:
+    containerregistrytype: 'Container Registry'
+    dockerRegistryConnection: 'Docker Hub'
+    action: 'Push images'
+    imageNamesPath: '$(Build.Repository.Name):$(Build.BuildNumber)'
+    qualifyImageName: false
+    includeLatestTag: true
