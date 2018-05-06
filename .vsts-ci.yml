@@ -23,7 +23,7 @@ steps:
   inputs:
     containerregistrytype: 'Container Registry'
     dockerRegistryConnection: 'Docker Hub'
-	action: 'Build an image'
+    action: 'Build an image'
     defaultContext: false
     context: Deck2MTGA.Web
     imageName: '$(Build.Repository.Name):$(Build.BuildNumber)'
