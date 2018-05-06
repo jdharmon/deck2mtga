@@ -5,7 +5,7 @@
 }
 
 <script type="text/javascript">
-    function submit(btn) {
+    function onSubmit(btn) {
         btn.value = "Searching...";
         btn.disabled = true;
         btn.form.submit();
@@ -24,7 +24,7 @@
             // style = "width: 300px; height: 400px;"
             @Html.TextArea("input", new { @class = "deck", placeholder = "Paste your deck here.\n\nExample:\n12 Mountain\n4 Kinjalli's Caller\n2 Regisaur Alpha" })
             <p>
-                <input type="submit" value="Convert" onclick="submit(this);" />
+                <input type="submit" value="Convert" onclick="onSubmit(this);" />
             </p>
         }
     </div>
