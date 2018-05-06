@@ -35,6 +35,6 @@ steps:
     containerregistrytype: 'Container Registry'
     dockerRegistryConnection: 'Docker Hub'
     action: 'Push images'
-    imageNamesPath: '$(Build.Repository.Name):$(Build.BuildNumber)'
+    imageName: '$(Build.Repository.Name):$(Build.BuildNumber)'
     qualifyImageName: false
     includeLatestTag: true
